@@ -4,18 +4,21 @@
 
 @section('content')
 <h2>Каталог товаров</h2>
-<p>Здесь будет выводиться список категорий и товаров.</p>
 
-<h3>Категории:</h3>
-<ul>
-    <li>Процессоры</li>
-    <li>Видеокарты</li>
-    <li>Материнские платы</li>
-    <li>Оперативная память</li>
-    <li>Накопители SSD/HDD</li>
-    <li>Ноутбуки</li>
-    <li>Периферия</li>
-</ul>
+@if(isset($categories) && $categories->count() > 0)
+    <div class="categories-grid">
+        @foreach($categories as $category)
+        <div class="category-card">
+            <a href="{{ url('/catalog/' . $category->slug) }}">
+                <h3>{{ $category->name }}</h3>
+                <p>{{ $category->description ?? 'Перейти в раздел...' }}</p>
+            </a>
+        </div>
+        @endforeach
+    </div>
+@else
+    <p>Категории пока не добавлены.</p>
+@endif
 
-<p class="note">* Детальная реализация каталога будет добавлена после настройки базы данных.</p>
+<p class="note">* Выберите категорию для просмотра товаров.</p>
 @endsection

@@ -1,43 +1,39 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\CatalogController;
 
 // Главная страница
 Route::get('/', function () {
     return view('home');
 })->name('home');
 
-// Каталог
-Route::get('/catalog', function () {
-    return view('catalog');
-})->name('catalog');
+// Маршруты каталога
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+Route::get('/catalog/{slug}', [CatalogController::class, 'category'])->name('category');
+Route::get('/catalog/{categorySlug}/{productSlug}', [CatalogController::class, 'product'])->name('product');
 
-// Новости
+// Остальные страницы
 Route::get('/news', function () {
     return view('news');
 })->name('news');
 
-// Услуги
 Route::get('/services', function () {
     return view('services');
 })->name('services');
 
-// Техподдержка
 Route::get('/support', function () {
     return view('support');
 })->name('support');
 
-// О компании
 Route::get('/about', function () {
     return view('about');
 })->name('about');
 
-// Контакты
 Route::get('/contacts', function () {
     return view('contacts');
 })->name('contacts');
 
-// Корзина
 Route::get('/cart', function () {
     return view('cart');
 })->name('cart');

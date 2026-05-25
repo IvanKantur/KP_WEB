@@ -6,7 +6,7 @@
 <h2>Контакты</h2>
 
 <div class="contacts-info">
-    <p><strong>Адрес:</strong> г. Севастополь, ул. Университетская , д. 100000</p>
+    <p><strong>Адрес:</strong> г. Севастополь, ул. Большая Морская, д. 41</p>
     <p><strong>Телефон:</strong> +7 (978) 123-45-67</p>
     <p><strong>Email:</strong> info@techstore.ru</p>
     <p><strong>Режим работы:</strong> Пн-Пт: 10:00-19:00, Сб: 11:00-16:00, Вс: выходной</p>

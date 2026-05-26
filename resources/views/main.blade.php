@@ -9,8 +9,30 @@
 <body>
     <header>
         <div class="container">
-            <h1>TechStore</h1>
-            <p>Компьютерная техника и комплектующие</p>
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <h1>TechStore</h1>
+                    <p>Компьютерная техника и комплектующие</p>
+                </div>
+                <div>
+                    @guest
+                        <a href="{{ route('login') }}" style="color: white; margin-left: 15px;">Вход</a>
+                        <a href="{{ route('register') }}" style="color: white; margin-left: 15px;">Регистрация</a>
+                    @else
+                        <span style="color: white;">Привет, {{ Auth::user()->name }}</span>
+                        @if(Auth::user()->is_admin)
+                            <a href="{{ route('admin.index') }}" style="color: white; margin-left: 15px;">Админка</a>
+                        @endif
+                        <a href="{{ route('logout') }}" style="color: white; margin-left: 15px;" 
+                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                            Выход
+                        </a>
+                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                            @csrf
+                        </form>
+                    @endguest
+                </div>
+            </div>
         </div>
     </header>
 

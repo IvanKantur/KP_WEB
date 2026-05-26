@@ -37,3 +37,6 @@ Route::get('/contacts', function () {
 Route::get('/cart', function () {
     return view('cart');
 })->name('cart');
+Auth::routes();
+
+Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');

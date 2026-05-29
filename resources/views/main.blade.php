@@ -9,22 +9,22 @@
 <body>
     <header>
         <div class="container">
-            <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
+            <div style="position: relative;">
+                <div style="text-align: center;">
                     <h1>TechStore</h1>
                     <p>Компьютерная техника и комплектующие</p>
                 </div>
-                <div>
+                <div class="auth-links-absolute">
                     @guest
-                        <a href="{{ route('login') }}" style="color: white; margin-left: 15px;">Вход</a>
-                        <a href="{{ route('register') }}" style="color: white; margin-left: 15px;">Регистрация</a>
+                        <a href="{{ route('login') }}">Вход</a>
+                        <a href="{{ route('register') }}">Регистрация</a>
                     @else
-                        <span style="color: white;">Привет, {{ Auth::user()->name }}</span>
+                        <span>Привет, {{ Auth::user()->name }}</span>
                         @if(Auth::user()->is_admin)
-                            <a href="{{ route('admin.index') }}" style="color: white; margin-left: 15px;">Админка</a>
+                            <a href="{{ route('admin.index') }}">Админка</a>
                         @endif
-                        <a href="{{ route('logout') }}" style="color: white; margin-left: 15px;" 
-                           onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                        <a href="{{ route('logout') }}" 
+                        onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             Выход
                         </a>
                         <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">

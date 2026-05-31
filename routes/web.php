@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 
 // Главная страница
@@ -79,6 +80,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/categories', [CategoryController::class, 'store'])->name('categories.store');
     Route::get('/categories/{id}/edit', [CategoryController::class, 'edit'])->name('categories.edit');
     Route::put('/categories/{id}', [CategoryController::class, 'update'])->name('categories.update');
+    // Заказы
+    Route::get('/orders', [OrderController::class, 'index'])->name('orders');
+    Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+    Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
     
     // Архивация и восстановление
     Route::delete('/categories/{id}/archive', [CategoryController::class, 'archive'])->name('categories.archive');
@@ -115,5 +120,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/users/{id}/remove-admin', [UserController::class, 'removeAdmin'])->name('users.remove-admin');
     });
 
+
+// Маршруты для заказов
+Route::post('/order/store', [OrderController::class, 'store'])->name('order.store');
+Route::get('/order/success/{id}', [OrderController::class, 'success'])->name('cart.success');
+
+// Заказы
+Route::get('/orders', [OrderController::class, 'index'])->name('orders');
+Route::get('/orders/{id}', [OrderController::class, 'show'])->name('orders.show');
+Route::post('/orders/{id}/status', [OrderController::class, 'updateStatus'])->name('orders.update-status');
 // Маршруты аутентификации (логин, регистрация, выход)
 Auth::routes();

@@ -24,6 +24,7 @@
     <div class="stat-card">
         <h3>Заказы</h3>
         <p>{{ $ordersCount }}</p>
+        <a href="{{ route('admin.orders') }}">Управление</a>
     </div>
 </div>
 @endsection

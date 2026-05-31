@@ -37,12 +37,13 @@
         @endif
         
         <div class="product-actions">
-            <label for="quantity">Количество:</label>
-            <input type="number" id="quantity" value="1" min="1" max="{{ $product->stock }}" {{ $product->stock > 0 ? '' : 'disabled' }}>
-            
-            <button class="btn-buy add-to-cart" data-product-id="{{ $product->id }}" {{ $product->stock > 0 ? '' : 'disabled' }}>
-                Добавить в корзину
-            </button>
+            <form action="{{ route('cart.add', $product->id) }}" method="POST" class="add-to-cart-form">
+                @csrf
+                <input type="hidden" name="quantity" value="1">
+                <button type="submit" class="add-to-cart">
+                    🛒 Добавить в корзину
+                </button>
+            </form>
         </div>
     </div>
 </div>

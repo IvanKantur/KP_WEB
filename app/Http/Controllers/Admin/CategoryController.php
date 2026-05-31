@@ -8,49 +8,61 @@ use Illuminate\Http\Request;
 
 class CategoryController extends Controller
 {
-    //Список всех категорий. Сортировка по полю sort_order (порядок вывода)
+    // Список всех категорий (включая архивные)
     public function index()
+    {
+        $categories = Category::withTrashed()->orderBy('sort_order')->get();
+        return view('admin.categories.index', compact('categories'));
+    }
+
+    // Только активные категории
+    public function indexActive()
     {
         $categories = Category::orderBy('sort_order')->get();
         return view('admin.categories.index', compact('categories'));
     }
 
-    // Форма добавления новой категории
+    // Только архивные категории
+    public function indexArchived()
+    {
+        $categories = Category::onlyTrashed()->orderBy('sort_order')->get();
+        return view('admin.categories.index', compact('categories'));
+    }
+
+    // Форма добавления категории
     public function create()
     {
         return view('admin.categories.create');
     }
 
-    //Сохранение новой категории в БД. Проверяем что имя и slug заполнены, slug уникальный
+    // Сохранение новой категории
     public function store(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',      // название обязательно
-            'slug' => 'required|string|unique:categories', // slug уникальный
-            'sort_order' => 'integer',                // порядок сортировки
+            'name' => 'required|string|max:255',
+            'slug' => 'required|string|unique:categories',
+            'sort_order' => 'integer',
         ]);
 
         Category::create($request->all());
-        
-        // Редирект с сообщением об успехе
         return redirect()->route('admin.categories')->with('success', 'Категория добавлена');
     }
 
     // Форма редактирования категории
     public function edit($id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::withTrashed()->findOrFail($id);
         return view('admin.categories.edit', compact('category'));
     }
 
-    //Обновление категории, при обновлении проверяем уникальность slug, исключая текущую категорию
+    // Обновление категории
     public function update(Request $request, $id)
     {
-        $category = Category::findOrFail($id);
+        $category = Category::withTrashed()->findOrFail($id);
         
         $request->validate([
             'name' => 'required|string|max:255',
-            'slug' => 'required|string|unique:categories,slug,' . $id, // исключаем текущий ID
+            'slug' => 'required|string|unique:categories,slug,' . $id,
             'sort_order' => 'integer',
         ]);
 
@@ -58,35 +70,30 @@ class CategoryController extends Controller
         return redirect()->route('admin.categories')->with('success', 'Категория обновлена');
     }
 
-    //Удаление категории, вместе с категорией удалятся все товары из-за onDelete('cascade')
-    public function destroy($id)
+    // Мягкое удаление (в архив)
+    public function archive($id)
     {
         $category = Category::findOrFail($id);
         $category->delete();
         
-        return redirect()->route('admin.categories')->with('success', 'Категория удалена');
+        return redirect()->route('admin.categories')->with('success', 'Категория перемещена в архив');
     }
 
-    // Только активные категории
-public function indexActive()
-{
-    $categories = Category::orderBy('sort_order')->get();
-    return view('admin.categories.index', compact('categories'));
-}
+    // Восстановление из архива
+    public function restore($id)
+    {
+        $category = Category::onlyTrashed()->findOrFail($id);
+        $category->restore();
+        
+        return redirect()->route('admin.categories')->with('success', 'Категория восстановлена');
+    }
 
-// Только архивные
-public function indexArchived()
-{
-    $categories = Category::onlyTrashed()->orderBy('sort_order')->get();
-    return view('admin.categories.index', compact('categories'));
-}
-
-// Восстановление из архива
-public function restore($id)
-{
-    $category = Category::onlyTrashed()->findOrFail($id);
-    $category->restore();
-    
-    return redirect()->route('admin.categories')->with('success', 'Категория восстановлена');
-}
+    // Полное удаление
+    public function destroy($id)
+    {
+        $category = Category::withTrashed()->findOrFail($id);
+        $category->forceDelete();
+        
+        return redirect()->route('admin.categories')->with('success', 'Категория удалена навсегда');
+    }
 }

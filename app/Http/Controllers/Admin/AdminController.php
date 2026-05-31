@@ -10,10 +10,7 @@ use App\Models\Order;
 
 class AdminController extends Controller
 {
-    /**
-     * Главная страница админ-панели
-     * Показывает статистику по сайту
-     */
+    // Главная страница админ-панели со статистикой
     public function index()
     {
         // Считаем количество записей
@@ -21,6 +18,7 @@ class AdminController extends Controller
         $categoriesCount = Category::count();
         $productsCount = Product::count();
         $ordersCount = Order::count();
+        $usersCount = User::count();
         
         return view('admin.index', compact('usersCount', 'categoriesCount', 'productsCount', 'ordersCount'));
     }

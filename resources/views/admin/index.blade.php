@@ -9,6 +9,7 @@
     <div class="stat-card">
         <h3>Пользователи</h3>
         <p>{{ $usersCount }}</p>
+        <a href="{{ route('admin.users') }}">Управление</a>
     </div>
     <div class="stat-card">
         <h3>Категории</h3>

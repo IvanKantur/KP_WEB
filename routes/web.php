@@ -5,11 +5,18 @@ use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\Admin\CategoryController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\CartController;
+
 
 // Главная страница
 Route::get('/', function () {
     return view('home');
 })->name('home');
+
+Route::get('/home', function () {
+    return redirect('/');
+});
 
 // Маршруты каталога (доступны всем)
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
@@ -40,6 +47,20 @@ Route::get('/contacts', function () {
 Route::get('/cart', function () {
     return view('cart');
 })->name('cart');
+
+// Маршруты корзины
+Route::get('/cart', [CartController::class, 'index'])->name('cart');
+Route::post('/cart/add/{id}', [CartController::class, 'add'])->name('cart.add');
+Route::post('/cart/update/{id}', [CartController::class, 'update'])->name('cart.update');
+Route::delete('/cart/remove/{id}', [CartController::class, 'remove'])->name('cart.remove');
+Route::delete('/cart/clear', [CartController::class, 'clear'])->name('cart.clear');
+Route::get('/cart/checkout', [CartController::class, 'checkout'])->name('cart.checkout');
+
+// AJAX маршруты для корзины (динамическое обновление)
+Route::post('/cart/update-all', [CartController::class, 'updateAll'])->name('cart.update-all');
+Route::post('/cart/remove-all', [CartController::class, 'removeItem'])->name('cart.remove-all');
+Route::post('/cart/clear-all', [CartController::class, 'clearAll'])->name('cart.clear-all');
+Route::get('/cart/count', [CartController::class, 'getCount'])->name('cart.count');
 
 // ========== АДМИНСКИЕ МАРШРУТЫ ==========
 // Все маршруты с префиксом /admin и именем admin.*
@@ -82,7 +103,17 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     
     // Полное удаление
     Route::delete('/products/{id}', [ProductController::class, 'destroy'])->name('products.destroy');
-});
+    // ===== Управление пользователями =====
+    Route::get('/users', [UserController::class, 'index'])->name('users');
+    Route::get('/users/create', [UserController::class, 'create'])->name('users.create');
+    Route::post('/users', [UserController::class, 'store'])->name('users.store');
+    Route::get('/users/{id}', [UserController::class, 'show'])->name('users.show');
+    Route::get('/users/{id}/edit', [UserController::class, 'edit'])->name('users.edit');
+    Route::put('/users/{id}', [UserController::class, 'update'])->name('users.update');
+    Route::delete('/users/{id}', [UserController::class, 'destroy'])->name('users.destroy');
+    Route::post('/users/{id}/make-admin', [UserController::class, 'makeAdmin'])->name('users.make-admin');
+    Route::post('/users/{id}/remove-admin', [UserController::class, 'removeAdmin'])->name('users.remove-admin');
+    });
 
 // Маршруты аутентификации (логин, регистрация, выход)
 Auth::routes();

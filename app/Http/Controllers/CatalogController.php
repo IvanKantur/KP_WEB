@@ -1,99 +1,44 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller;
 use App\Models\Category;
-use Illuminate\Http\Request;
+use App\Models\Product;
 
-class CategoryController extends Controller
+class CatalogController extends Controller
 {
-    // Список всех категорий (включая архивные)
+    // Показываем все категории на главной странице каталога
     public function index()
     {
-        $categories = Category::withTrashed()->orderBy('sort_order')->get();
-        return view('admin.categories.index', compact('categories'));
-    }
-
-    // Только активные категории
-    public function indexActive()
-    {
+        // Достаем все категории, сортируем по порядку
         $categories = Category::orderBy('sort_order')->get();
-        return view('admin.categories.index', compact('categories'));
-    }
-
-    // Только архивные категории
-    public function indexArchived()
-    {
-        $categories = Category::onlyTrashed()->orderBy('sort_order')->get();
-        return view('admin.categories.index', compact('categories'));
-    }
-
-    // Форма добавления
-    public function create()
-    {
-        return view('admin.categories.create');
-    }
-
-    // Сохранение
-    public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|unique:categories',
-            'sort_order' => 'integer',
-        ]);
-
-        Category::create($request->all());
-        return redirect()->route('admin.categories')->with('success', 'Категория добавлена');
-    }
-
-    // Форма редактирования
-    public function edit($id)
-    {
-        $category = Category::withTrashed()->findOrFail($id);
-        return view('admin.categories.edit', compact('category'));
-    }
-
-    // Обновление
-    public function update(Request $request, $id)
-    {
-        $category = Category::withTrashed()->findOrFail($id);
         
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'slug' => 'required|string|unique:categories,slug,' . $id,
-            'sort_order' => 'integer',
-        ]);
-
-        $category->update($request->all());
-        return redirect()->route('admin.categories')->with('success', 'Категория обновлена');
+        // Передаем их в представление catalog.blade.php
+        return view('catalog', compact('categories'));
     }
 
-    // Мягкое удаление (в архив)
-    public function archive($id)
+    // Показываем товары в выбранной категории
+    public function category($slug)
     {
-        $category = Category::findOrFail($id);
-        $category->delete();
+        // Ищем категорию по slug (url-псевдониму)
+        $category = Category::where('slug', $slug)->firstOrFail();
         
-        return redirect()->route('admin.categories')->with('success', 'Категория перемещена в архив');
+        // Достаем товары только из этой категории и только активные
+        $products = Product::where('category_id', $category->id)
+                          ->where('is_active', true)
+                          ->get();
+        
+        return view('category', compact('category', 'products'));
     }
 
-    // Восстановление из архива
-    public function restore($id)
+    // Показываем один конкретный товар
+    public function product($categorySlug, $productSlug)
     {
-        $category = Category::onlyTrashed()->findOrFail($id);
-        $category->restore();
+        // Ищем товар по slug, подгружаем его категорию
+        $product = Product::where('slug', $productSlug)
+                         ->with('category')
+                         ->firstOrFail();
         
-        return redirect()->route('admin.categories')->with('success', 'Категория восстановлена');
-    }
-
-    // Полное удаление
-    public function destroy($id)
-    {
-        $category = Category::withTrashed()->findOrFail($id);
-        $category->forceDelete();
-        
-        return redirect()->route('admin.categories')->with('success', 'Категория удалена навсегда');
+        return view('product', compact('product'));
     }
 }

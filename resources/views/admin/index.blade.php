@@ -26,5 +26,10 @@
         <p>{{ $ordersCount }}</p>
         <a href="{{ route('admin.orders') }}">Управление</a>
     </div>
+    <div class="stat-card">
+        <h3>Новости</h3>
+        <p>{{ \App\Models\News::count() }}</p>
+        <a href="{{ route('admin.news') }}">Управление</a>
+    </div>
 </div>
 @endsection

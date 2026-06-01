@@ -5,25 +5,28 @@
 @section('content')
 <h2>Новости и акции</h2>
 
+@php
+    $newsList = App\Models\News::where('is_active', true)
+        ->orderBy('published_at', 'desc')
+        ->paginate(10);
+@endphp
+
 <div class="news-list">
+    @foreach($newsList as $news)
     <article class="news-item">
-        <h3><a href="#">Скидки на видеокарты до 20%</a></h3>
-        <p class="news-date">15.05.2025</p>
-        <p>Только до конца месяца скидки на все видеокарты NVIDIA и AMD...</p>
+        <h3>
+            <a href="{{ route('news.show', $news->slug) }}">{{ $news->title }}</a>
+        </h3>
+        <p class="news-date">{{ $news->published_at ? $news->published_at->format('d.m.Y') : '' }}</p>
+        <p class="news-announce">{{ $news->announce }}</p>
+        <a href="{{ route('news.show', $news->slug) }}" class="more-link">Читать далее →</a>
     </article>
-
-    <article class="news-item">
-        <h3><a href="#">Поступление новых процессоров Intel</a></h3>
-        <p class="news-date">10.05.2025</p>
-        <p>В продажу поступили процессоры Intel Core 14-го поколения...</p>
-    </article>
-
-    <article class="news-item">
-        <h3><a href="#">График работы в праздничные дни</a></h3>
-        <p class="news-date">01.05.2025</p>
-        <p>Уважаемые клиенты, ознакомьтесь с графиком работы магазина...</p>
-    </article>
+    @endforeach
 </div>
 
-<p class="note">* Управление новостями через админ-панель будет добавлено позже.</p>
+{{ $newsList->links() }}
+
+@if($newsList->isEmpty())
+    <p>Новостей пока нет.</p>
+@endif
 @endsection

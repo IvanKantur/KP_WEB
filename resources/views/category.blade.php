@@ -5,20 +5,19 @@
 
 <div class="products-grid">
     @foreach($products as $product)
-    <div class="product-card">
-        <div class="product-image">
-            @if($product->image)
-                <img src="{{ asset('storage/' . $product->image) }}" alt="{{ $product->name }}">
-            @else
-                <span>📷 Нет фото</span>
-            @endif
+    <a href="{{ url('/catalog/' . $category->slug . '/' . $product->slug) }}" class="product-card-link">
+        <div class="product-card">
+            <div class="product-image">
+                @if($product->thumb)
+                    <img src="{{ asset('storage/' . $product->thumb) }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                @else
+                    <span>📷 Нет фото</span>
+                @endif
+            </div>
+            <div class="product-title">{{ $product->name }}</div>
+            <div class="product-price">{{ number_format($product->price, 0, ',', ' ') }} ₽</div>
         </div>
-        <div class="product-title">{{ $product->name }}</div>
-        <div class="product-price">{{ number_format($product->price, 0, ',', ' ') }} ₽</div>
-        <a href="{{ url('/catalog/' . $category->slug . '/' . $product->slug) }}">
-            <button class="btn-buy">Подробнее</button>
-        </a>
-    </div>
+    </a>
     @endforeach
 </div>
 
@@ -27,4 +26,20 @@
 @endif
 
 <a href="{{ url('/catalog') }}" class="back-link">← Назад к категориям</a>
+
+<style>
+.product-card-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.product-card-link:hover .product-card {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+.product-card {
+    transition: all 0.3s ease;
+    height: 100%;
+}
+</style>
 @endsection

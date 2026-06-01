@@ -27,7 +27,11 @@
             @foreach($products as $product)
             <div class="cart-item" data-product-id="{{ $product['id'] }}">
                 <div class="cart-item-image">
-                    <div class="image-placeholder">📦</div>
+                    @if($product['thumb'])
+                        <img src="{{ asset('storage/' . $product['thumb']) }}" alt="{{ $product['name'] }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: 12px;">
+                    @else
+                        <div class="image-placeholder">📦</div>
+                    @endif
                 </div>
                 <div class="cart-item-details">
                     <h3 class="cart-item-title">{{ $product['name'] }}</h3>

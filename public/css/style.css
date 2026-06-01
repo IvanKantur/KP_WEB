@@ -123,7 +123,7 @@ nav a:hover {
 
 .cart-count {
     position: absolute;
-    top: -8px;
+    top: 5px;
     right: -8px;
     background: #dc3545;
     color: white;

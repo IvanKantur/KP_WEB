@@ -40,16 +40,26 @@ class CartController extends Controller
 
         if (!empty($cart)) {
             $productIds = array_keys($cart);
-            $productsList = Product::whereIn('id', $productIds)->get();
+            $productsList = Product::whereIn('id', $productIds)->with('images')->get();
 
             foreach ($productsList as $product) {
                 $quantity = $cart[$product->id];
+                
+                //Получаем миниатюру (первое фото из галереи)
+                $thumb = null;
+                if ($product->images && $product->images->count() > 0) {
+                    $thumb = $product->images->first()->image;
+                } elseif ($product->image) {
+                    $thumb = $product->image;
+                }
+                
                 $products[] = [
                     'id' => $product->id,
                     'name' => $product->name,
                     'price' => $product->price,
                     'quantity' => $quantity,
                     'subtotal' => $product->price * $quantity,
+                    'thumb' => $thumb,
                 ];
                 $total += $product->price * $quantity;
             }
@@ -154,43 +164,52 @@ class CartController extends Controller
 
     // Обновление всех товаров сразу (AJAX)
     public function updateAll(Request $request)
-    {
-        $cart = $this->getCart();
-        $items = $request->input('items', []);
+{
+    $cart = $this->getCart();
+    $items = $request->input('items', []);
+    
+    foreach ($items as $item) {
+        $id = $item['id'];
+        $quantity = (int)$item['quantity'];
         
-        foreach ($items as $item) {
-            $id = $item['id'];
-            $quantity = (int)$item['quantity'];
-            
-            if ($quantity <= 0) {
-                unset($cart[$id]);
-            } else {
-                $cart[$id] = $quantity;
-            }
+        if ($quantity <= 0) {
+            unset($cart[$id]);
+        } else {
+            $cart[$id] = $quantity;
         }
-        
-        $productIds = array_keys($cart);
-        $products = Product::whereIn('id', $productIds)->get();
-        $total = 0;
-        $responseItems = [];
-        
-        foreach ($products as $product) {
-            $quantity = $cart[$product->id];
-            $subtotal = $product->price * $quantity;
-            $total += $subtotal;
-            $responseItems[] = [
-                'id' => $product->id,
-                'subtotal' => $subtotal,
-                'subtotal_formatted' => number_format($subtotal, 0, ',', ' ') . ' ₽',
-            ];
-        }
-        
-        return response()->json([
-            'success' => true,
-            'items' => $responseItems,
-            'total_formatted' => number_format($total, 0, ',', ' ') . ' ₽',
-        ])->withCookie($this->saveCart($cart));
     }
+    
+    $productIds = array_keys($cart);
+    $products = Product::whereIn('id', $productIds)->with('images')->get();
+    $total = 0;
+    $responseItems = [];
+    
+    foreach ($products as $product) {
+        $quantity = $cart[$product->id];
+        $subtotal = $product->price * $quantity;
+        $total += $subtotal;
+        
+        $thumb = null;
+        if ($product->images && $product->images->count() > 0) {
+            $thumb = $product->images->first()->image;
+        } elseif ($product->image) {
+            $thumb = $product->image;
+        }
+        
+        $responseItems[] = [
+            'id' => $product->id,
+            'subtotal' => $subtotal,
+            'subtotal_formatted' => number_format($subtotal, 0, ',', ' ') . ' ₽',
+            'thumb' => $thumb ? asset('storage/' . $thumb) : null,
+        ];
+    }
+    
+    return response()->json([
+        'success' => true,
+        'items' => $responseItems,
+        'total_formatted' => number_format($total, 0, ',', ' ') . ' ₽',
+    ])->withCookie($this->saveCart($cart));
+}
 
     // Удаление одного товара (AJAX)
     public function removeItem(Request $request)

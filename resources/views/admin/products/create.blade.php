@@ -5,7 +5,7 @@
 @section('content')
 <h2>Добавление товара</h2>
 
-<form method="POST" action="{{ route('admin.products.store') }}">
+<form method="POST" action="{{ route('admin.products.store') }}" enctype="multipart/form-data">
     @csrf
     <div class="form-group">
         <label>Категория:</label>
@@ -41,13 +41,23 @@
         <label>Характеристики:</label>
         <textarea name="specifications" rows="3"></textarea>
     </div>
+    
+    <!-- Блок для загрузки фото -->
     <div class="form-group">
-        <label>Активен:</label>
-        <input type="checkbox" name="is_active" value="1" checked>
+        <label>Фото товара (до 5 шт.):</label>
+        <input type="file" name="images[]" multiple accept="image/*" class="form-control">
+        <small>Можно выбрать несколько файлов одновременно (Ctrl+выбор)</small>
+    </div>
+    
+    <div class="form-group">
+        <label>
+            <input type="checkbox" name="is_active" value="1" checked> Активен
+        </label>
     </div>
     <div class="form-group">
-        <label>Рекомендуемый:</label>
-        <input type="checkbox" name="is_featured" value="1">
+        <label>
+            <input type="checkbox" name="is_featured" value="1"> Рекомендуемый
+        </label>
     </div>
     <button type="submit" class="btn">Сохранить</button>
 </form>

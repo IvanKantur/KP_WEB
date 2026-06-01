@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Models\ProductImage;
 
 class Product extends Model
 {
@@ -66,4 +67,32 @@ class Product extends Model
     {
         return $this->stock > 0 && $this->is_active;
     }
+
+    //Связь с изображениями товара
+    public function images()
+    {
+        return $this->hasMany(ProductImage::class)->orderBy('sort_order');
+    }
+
+    //Получить главное изображение (первое по порядку)
+    public function getMainImageAttribute()
+    {
+        $image = $this->images()->first();
+        return $image ? $image->image : $this->image;
+    }
+
+    //Получить все изображения
+    public function getAllImagesAttribute()
+    {
+        return $this->images()->get();
+    }
+
+    //Получить миниатюру (первое фото из галереи или основное)
+public function getThumbAttribute()
+{
+    if ($this->images && $this->images->count() > 0) {
+        return $this->images->first()->image;
+    }
+    return $this->image;
+}
 }

@@ -6,6 +6,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Product;
 use Illuminate\Http\Request;
+use App\Mail\OrderConfirmation;
+use Illuminate\Support\Facades\Mail;
 
 class OrderController extends Controller
 {
@@ -62,6 +64,11 @@ class OrderController extends Controller
                 'quantity' => $item['quantity'],
                 'price' => $item['price'],
             ]);
+        }
+
+        //Отправляем письмо клиенту (если указан email)
+        if ($request->customer_email) {
+            Mail::to($request->customer_email)->send(new OrderConfirmation($order));
         }
 
         return redirect()->route('cart.success', $order->id)

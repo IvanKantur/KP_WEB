@@ -21,7 +21,11 @@ Route::get('/home', function () {
 });
 
 //Маршруты каталога
-Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+// Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+Route::get('/catalog', function () {
+    $categories = App\Models\Category::all();
+    return view('catalog', ['categories' => $categories]);
+});
 Route::get('/catalog/{slug}', [CatalogController::class, 'category'])->name('category');
 Route::get('/catalog/{categorySlug}/{productSlug}', [CatalogController::class, 'product'])->name('product');
 

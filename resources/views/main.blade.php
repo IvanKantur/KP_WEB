@@ -9,6 +9,21 @@
     {{-- <link rel="stylesheet" href="{{ url('/css/style.css') }}">  --}}
     {{-- для опубликованной --}}
     <meta name="csrf-token" content="{{ csrf_token() }}">
+    @if(request()->routeIs('admin.news.*') || request()->routeIs('admin.products.*'))
+        <script src="https://cdn.tiny.cloud/1/no-api-key/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+        <script>
+            tinymce.init({
+                selector: '.editor',
+                height: 400,
+                menubar: false,
+                plugins: 'advlist autolink lists link image charmap preview anchor searchreplace visualblocks code fullscreen insertdatetime media table help wordcount',
+                toolbar: 'undo redo | formatselect | bold italic backcolor | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | removeformat | help',
+                language: 'ru',
+                images_upload_url: '/upload/image',
+                automatic_uploads: false
+            });
+        </script>
+    @endif
 </head>
 <style>
 /* Корпоративные цвета TechStore */

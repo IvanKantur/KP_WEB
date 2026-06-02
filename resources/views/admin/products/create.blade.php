@@ -35,11 +35,11 @@
     </div>
     <div class="form-group">
         <label>Описание:</label>
-        <textarea name="description" rows="3"></textarea>
+        <textarea name="description" class="editor" rows="5">{{ old('description') }}</textarea>
     </div>
     <div class="form-group">
         <label>Характеристики:</label>
-        <textarea name="specifications" rows="3"></textarea>
+        <textarea name="specifications" class="editor" rows="5">{{ old('specifications') }}</textarea>
     </div>
     
     <!-- Блок для загрузки фото -->
@@ -63,4 +63,10 @@
 </form>
 
 <a href="{{ route('admin.products') }}">← Назад</a>
+
+<style>
+    .ck-editor__editable {
+        min-height: 200px;
+    }
+</style>
 @endsection

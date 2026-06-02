@@ -36,11 +36,11 @@
     </div>
     <div class="form-group">
         <label>Описание:</label>
-        <textarea name="description" rows="3">{{ $product->description }}</textarea>
+        <textarea name="description" class="editor" rows="5">{{ $product->description }}</textarea>
     </div>
     <div class="form-group">
         <label>Характеристики:</label>
-        <textarea name="specifications" rows="3">{{ $product->specifications }}</textarea>
+        <textarea name="specifications" class="editor" rows="5">{{ $product->specifications }}</textarea>
     </div>
     
     <!-- Блок для загрузки новых фото -->
@@ -82,107 +82,105 @@
 
 <a href="{{ route('admin.products') }}">← Назад</a>
 
-<style>
-.sortable-images {
-    display: flex;
-    gap: 15px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-}
-.image-item {
-    position: relative;
-    border: 1px solid var(--gray-border);
-    border-radius: 8px;
-    padding: 5px;
-    background: var(--white);
-    cursor: move;
-}
-.drag-handle {
-    position: absolute;
-    bottom: 5px;
-    left: 5px;
-    background: rgba(0,0,0,0.5);
-    color: white;
-    font-size: 14px;
-    padding: 2px 6px;
-    border-radius: 4px;
-    cursor: move;
-}
-.delete-image {
-    position: absolute;
-    top: -10px;
-    right: -10px;
-    background: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    cursor: pointer;
-    font-size: 12px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-.delete-image:hover {
-    background: #c82333;
-}
-</style>
-
 <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
 <script>
-// Сортировка фото
-var sortable = new Sortable(document.getElementById('sortable-images'), {
-    animation: 150,
-    onEnd: function() {
-        // Сохраняем новый порядок
-        let items = [];
-        document.querySelectorAll('.image-item').forEach((item, index) => {
-            items.push({
-                id: item.dataset.id,
-                order: index
-            });
-        });
-        
-        fetch('{{ route("admin.products.image.sort") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRF-TOKEN': '{{ csrf_token() }}'
-            },
-            body: JSON.stringify({ items: items })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.success) {
-                console.log('Порядок сохранен');
+    // Сортировка фото
+    if (document.getElementById('sortable-images')) {
+        var sortable = new Sortable(document.getElementById('sortable-images'), {
+            animation: 150,
+            onEnd: function() {
+                let items = [];
+                document.querySelectorAll('.image-item').forEach((item, index) => {
+                    items.push({
+                        id: item.dataset.id,
+                        order: index
+                    });
+                });
+                
+                fetch('{{ route("admin.products.image.sort") }}', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ items: items })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) console.log('Порядок сохранен');
+                });
             }
         });
     }
-});
-
-// Удаление изображения
-document.querySelectorAll('.delete-image').forEach(btn => {
-    btn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        let id = this.dataset.id;
-        if (confirm('Удалить фото?')) {
-            fetch('/admin/products/image/' + id, {
-                method: 'DELETE',
-                headers: {
-                    'X-CSRF-TOKEN': '{{ csrf_token() }}',
-                    'Content-Type': 'application/json'
-                }
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.success) {
-                    this.closest('.image-item').remove();
-                }
-            })
-            .catch(error => console.error('Ошибка:', error));
-        }
+    
+    // Удаление изображения
+    document.querySelectorAll('.delete-image').forEach(btn => {
+        btn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            let id = this.dataset.id;
+            if (confirm('Удалить фото?')) {
+                fetch('{{ url("/admin/products/image") }}/' + id, {
+                    method: 'DELETE',
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Content-Type': 'application/json'
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.closest('.image-item').remove();
+                    }
+                });
+            }
+        });
     });
-});
 </script>
+
+<style>
+    .sortable-images {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        margin-top: 10px;
+    }
+    .image-item {
+        position: relative;
+        border: 1px solid var(--gray-border);
+        border-radius: 8px;
+        padding: 5px;
+        background: var(--white);
+        cursor: move;
+    }
+    .drag-handle {
+        position: absolute;
+        bottom: 5px;
+        left: 5px;
+        background: rgba(0,0,0,0.5);
+        color: white;
+        font-size: 14px;
+        padding: 2px 6px;
+        border-radius: 4px;
+        cursor: move;
+    }
+    .delete-image {
+        position: absolute;
+        top: -10px;
+        right: -10px;
+        background: #dc3545;
+        color: white;
+        border: none;
+        border-radius: 50%;
+        width: 24px;
+        height: 24px;
+        cursor: pointer;
+        font-size: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .delete-image:hover {
+        background: #c82333;
+    }
+</style>
 @endsection

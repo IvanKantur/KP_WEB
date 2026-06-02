@@ -10,7 +10,16 @@
         <span class="news-date">📅 {{ $news->published_at ? $news->published_at->format('d.m.Y') : 'Дата не указана' }}</span>
     </div>
     
-    @if($news->image)
+    <!-- Галерея фото (до 2 шт) -->
+    @if($news->images && $news->images->count() > 0)
+        <div class="news-gallery">
+            @foreach($news->images as $img)
+                <div class="news-gallery-item">
+                    <img src="{{ asset('storage/' . $img->image) }}" alt="{{ $news->title }}">
+                </div>
+            @endforeach
+        </div>
+    @elseif($news->image)
         <div class="news-image">
             <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title }}">
         </div>
@@ -47,6 +56,25 @@
     }
     .news-image img {
         max-width: 100%;
+        border-radius: 12px;
+    }
+    /* Галерея для новостей */
+    .news-gallery {
+        display: flex;
+        gap: 20px;
+        margin: 25px 0;
+        flex-wrap: wrap;
+        justify-content: center;
+    }
+    .news-gallery-item {
+        flex: 1;
+        min-width: 250px;
+        text-align: center;
+    }
+    .news-gallery-item img {
+        width: 100%;
+        max-height: 300px;
+        object-fit: cover;
         border-radius: 12px;
     }
     .news-content {

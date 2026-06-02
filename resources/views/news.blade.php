@@ -14,6 +14,11 @@
 <div class="news-list">
     @foreach($newsList as $news)
     <article class="news-item">
+        @if($news->firstImage)
+            <img src="{{ asset('storage/' . $news->firstImage->image) }}" alt="{{ $news->title }}" class="news-preview-image">
+        @elseif($news->image)
+            <img src="{{ asset('storage/' . $news->image) }}" alt="{{ $news->title }}" class="news-preview-image">
+        @endif
         <h3>
             <a href="{{ route('news.show', $news->slug) }}">{{ $news->title }}</a>
         </h3>
@@ -29,4 +34,14 @@
 @if($newsList->isEmpty())
     <p>Новостей пока нет.</p>
 @endif
+
+<style>
+.news-preview-image {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 12px;
+    margin-bottom: 15px;
+}
+</style>
 @endsection

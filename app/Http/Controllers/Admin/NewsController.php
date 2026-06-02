@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\News;
+use App\Models\NewsImage;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 
 class NewsController extends Controller
 {
@@ -45,13 +47,28 @@ class NewsController extends Controller
             'announce' => 'nullable|string',
             'content' => 'nullable|string',
             'published_at' => 'nullable|date',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120'
         ]);
 
         $data = $request->all();
         $data['is_active'] = $request->has('is_active');
         $data['slug'] = Str::slug($request->slug);
 
-        News::create($data);
+        $news = News::create($data);
+
+        //Обработка фото (максимум 2)
+        if ($request->hasFile('images')) {
+            $sortOrder = 0;
+            foreach ($request->file('images') as $file) {
+                if ($sortOrder >= 2) break;
+                $path = $file->store('news', 'public');
+                NewsImage::create([
+                    'news_id' => $news->id,
+                    'image' => $path,
+                    'sort_order' => $sortOrder++,
+                ]);
+            }
+        }
 
         return redirect()->route('admin.news')->with('success', 'Новость добавлена');
     }
@@ -59,7 +76,7 @@ class NewsController extends Controller
     //Форма редактирования
     public function edit($id)
     {
-        $news = News::withTrashed()->findOrFail($id);
+        $news = News::withTrashed()->with('images')->findOrFail($id);
         return view('admin.news.edit', compact('news'));
     }
 
@@ -74,6 +91,7 @@ class NewsController extends Controller
             'announce' => 'nullable|string',
             'content' => 'nullable|string',
             'published_at' => 'nullable|date',
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120'
         ]);
 
         $data = $request->all();
@@ -82,7 +100,32 @@ class NewsController extends Controller
 
         $news->update($data);
 
+        //Добавление новых фото (максимум 2 всего)
+        if ($request->hasFile('images')) {
+            $currentCount = $news->images->count();
+            $sortOrder = $currentCount;
+            foreach ($request->file('images') as $file) {
+                if ($sortOrder >= 2) break;
+                $path = $file->store('news', 'public');
+                NewsImage::create([
+                    'news_id' => $news->id,
+                    'image' => $path,
+                    'sort_order' => $sortOrder++,
+                ]);
+            }
+        }
+
         return redirect()->route('admin.news')->with('success', 'Новость обновлена');
+    }
+
+    //Удаление фото
+    public function deleteImage($id)
+    {
+        $image = NewsImage::findOrFail($id);
+        Storage::disk('public')->delete($image->image);
+        $image->delete();
+
+        return response()->json(['success' => true]);
     }
 
     //Мягкое удаление (в архив)
@@ -107,6 +150,13 @@ class NewsController extends Controller
     public function destroy($id)
     {
         $news = News::withTrashed()->findOrFail($id);
+        
+        //Удаляем все фото новости
+        foreach ($news->images as $image) {
+            Storage::disk('public')->delete($image->image);
+            $image->delete();
+        }
+        
         $news->forceDelete();
 
         return redirect()->route('admin.news')->with('success', 'Новость удалена навсегда');

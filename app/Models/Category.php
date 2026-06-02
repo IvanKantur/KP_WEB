@@ -16,6 +16,7 @@ class Category extends Model
         'slug',
         'description',
         'sort_order',
+        'image',
     ];
 
     // Поля, которые будут преобразованы в даты

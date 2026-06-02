@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class CategoryController extends Controller
 {
@@ -42,9 +43,17 @@ class CategoryController extends Controller
             'name' => 'required|string|max:255',
             'slug' => 'required|string|unique:categories',
             'sort_order' => 'integer',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
-        Category::create($request->all());
+        $data = $request->all();
+        
+        if ($request->hasFile('image')) {
+            $path = $request->file('image')->store('categories', 'public');
+            $data['image'] = $path;
+        }
+
+        Category::create($data);
         return redirect()->route('admin.categories')->with('success', 'Категория добавлена');
     }
 
@@ -59,14 +68,26 @@ class CategoryController extends Controller
     public function update(Request $request, $id)
     {
         $category = Category::withTrashed()->findOrFail($id);
-        
+
         $request->validate([
             'name' => 'required|string|max:255',
             'slug' => 'required|string|unique:categories,slug,' . $id,
             'sort_order' => 'integer',
+            'image' => 'image|mimes:jpeg,png,jpg,gif,webp|max:2048'
         ]);
 
-        $category->update($request->all());
+        $data = $request->all();
+        
+        if ($request->hasFile('image')) {
+            // Удаляем старое фото
+            if ($category->image) {
+                Storage::disk('public')->delete($category->image);
+            }
+            $path = $request->file('image')->store('categories', 'public');
+            $data['image'] = $path;
+        }
+
+        $category->update($data);
         return redirect()->route('admin.categories')->with('success', 'Категория обновлена');
     }
 

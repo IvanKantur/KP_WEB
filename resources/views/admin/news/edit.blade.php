@@ -33,6 +33,25 @@
             <input type="checkbox" name="is_active" value="1" {{ $news->is_active ? 'checked' : '' }}> Опубликовать
         </label>
     </div>
+    <div class="form-group">
+        <label>Добавить фото (максимум 2 всего):</label>
+        <input type="file" name="images[]" multiple accept="image/*">
+        <small>Можно добавить еще фото (всего не более 2)</small>
+    </div>
+
+    @if($news->images->count() > 0)
+    <div class="form-group">
+        <label>Текущие фото:</label>
+        <div class="current-images">
+            @foreach($news->images as $img)
+            <div class="image-item" data-id="{{ $img->id }}">
+                <img src="{{ asset('storage/' . $img->image) }}" style="width: 80px; height: 80px; object-fit: cover;">
+                <button type="button" class="delete-image" data-id="{{ $img->id }}">🗑️</button>
+            </div>
+            @endforeach
+        </div>
+    </div>
+@endif
     <button type="submit" class="btn">Сохранить</button>
 </form>
 

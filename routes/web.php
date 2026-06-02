@@ -39,11 +39,11 @@ Route::get('/check-images', function () {
 });
 
 //Маршруты каталога
-// Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
-Route::get('/catalog', function () {
-    $categories = App\Models\Category::all();
-    return view('catalog', ['categories' => $categories]);
-});
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+// Route::get('/catalog', function () {
+//     $categories = App\Models\Category::all();
+//     return view('catalog', ['categories' => $categories]);
+// });
 Route::get('/catalog/{slug}', [CatalogController::class, 'category'])->name('category');
 Route::get('/catalog/{categorySlug}/{productSlug}', [CatalogController::class, 'product'])->name('product');
 
@@ -155,6 +155,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('/news/{id}/archive', [NewsController::class, 'archive'])->name('news.archive');
     Route::post('/news/{id}/restore', [NewsController::class, 'restore'])->name('news.restore');
     Route::delete('/news/{id}', [NewsController::class, 'destroy'])->name('news.destroy');
+    Route::delete('/news/image/{id}', [NewsController::class, 'deleteImage'])->name('news.image.delete');
 });
 
 //Публичные маршруты заказов

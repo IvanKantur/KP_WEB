@@ -5,11 +5,15 @@
 @section('content')
 <h2>Добавление категории</h2>
 
-<form method="POST" action="{{ route('admin.categories.store') }}">
+<form method="POST" action="{{ route('admin.categories.store') }}" enctype="multipart/form-data">
     @csrf
     <div class="form-group">
         <label>Название:</label>
         <input type="text" name="name" required>
+    </div>
+    <div class="form-group">
+        <label>Фото категории:</label>
+        <input type="file" name="image" accept="image/*">
     </div>
     <div class="form-group">
         <label>Slug (url):</label>

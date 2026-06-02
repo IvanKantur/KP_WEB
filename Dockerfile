@@ -17,18 +17,20 @@ COPY . .
 # Игнорируем требования к версии PHP
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-req=php
 
-# Создаем и настраиваем БД
-RUN touch database/database.sqlite && chmod 777 database/database.sqlite
+# Копируем существующую БД из репозитория (если есть)
+COPY database/database.sqlite /var/www/html/database/database.sqlite
 
+# Настраиваем права
 RUN chown -R www-data:www-data storage bootstrap/cache database
 RUN chmod -R 775 storage bootstrap/cache
 RUN chmod -R 777 database
 
-# Выполняем миграции
-RUN php artisan migrate --force
+# Выполняем миграции только если нет таблиц
+RUN php artisan migrate --force || true
 
 EXPOSE 10000
 
+# Очищаем кэш при старте
 RUN php artisan config:clear && \
     php artisan cache:clear && \
     php artisan view:clear && \

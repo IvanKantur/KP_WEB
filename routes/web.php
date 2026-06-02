@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\NewsController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ContactController;
 
 //Главная страница
 Route::get('/', function () {
@@ -96,6 +97,10 @@ Route::post('/cart/update-all', [CartController::class, 'updateAll'])->name('car
 Route::post('/cart/remove-all', [CartController::class, 'removeItem'])->name('cart.remove-all');
 Route::post('/cart/clear-all', [CartController::class, 'clearAll'])->name('cart.clear-all');
 Route::get('/cart/count', [CartController::class, 'getCount'])->name('cart.count');
+
+//Форма обратной связи
+Route::post('/contacts', [ContactController::class, 'send'])->name('contacts.send');
+
 
 //Админские маршруты
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {

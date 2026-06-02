@@ -24,6 +24,20 @@ Route::get('/storage-link', function () {
     return 'Storage linked!';
 });
 
+Route::get('/check-images', function () {
+    $products = App\Models\Product::with('images')->get();
+    $output = '';
+    foreach ($products as $product) {
+        $output .= '<h3>' . $product->name . '</h3>';
+        foreach ($product->images as $img) {
+            $path = storage_path('app/public/' . $img->image);
+            $exists = file_exists($path);
+            $output .= 'Файл: ' . $img->image . ' - существует: ' . ($exists ? 'Да' : 'Нет') . '<br>';
+        }
+    }
+    return $output;
+});
+
 //Маршруты каталога
 // Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/catalog', function () {

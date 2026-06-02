@@ -75,6 +75,33 @@ Route::get('/run-migrate', function () {
     }
 });
 
+Route::get('/seed-db', function () {
+    try {
+        // Миграции
+        Artisan::call('migrate:fresh', ['--force' => true]);
+        
+        // Сиды (категории, товары, новости)
+        Artisan::call('db:seed', ['--force' => true]);
+        
+        // Создаем админа
+        use App\Models\User;
+        use Illuminate\Support\Facades\Hash;
+        
+        if (!User::where('email', 'admin@techstore.ru')->exists()) {
+            User::create([
+                'name' => 'admin',
+                'email' => 'admin@techstore.ru',
+                'password' => Hash::make('password123'),
+                'is_admin' => true,
+            ]);
+        }
+        
+        return 'Database seeded successfully!';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
 //Статические страницы
 Route::get('/news', function () {
     return view('news');

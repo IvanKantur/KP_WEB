@@ -29,6 +29,8 @@ Route::get('/catalog', function () {
 Route::get('/catalog/{slug}', [CatalogController::class, 'category'])->name('category');
 Route::get('/catalog/{categorySlug}/{productSlug}', [CatalogController::class, 'product'])->name('product');
 
+Route::get('/test-controller', [App\Http\Controllers\CatalogController::class, 'index']);
+
 //Статические страницы
 Route::get('/news', function () {
     return view('news');

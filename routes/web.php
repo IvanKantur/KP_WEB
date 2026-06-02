@@ -52,6 +52,19 @@ Route::get('/debug-db', function () {
     return "DB path: $path<br>Exists: " . ($exists ? 'yes' : 'no') . "<br>Size: $size bytes";
 });
 
+Route::get('/debug-sql', function () {
+    $count = DB::table('categories')->count();
+    $records = DB::table('categories')->get();
+    
+    $output = "Count from DB::table: $count<br>";
+    $output .= "Records:<br>";
+    foreach ($records as $r) {
+        $output .= $r->id . ' - ' . $r->name . ' - slug: ' . $r->slug . '<br>';
+    }
+    
+    return $output;
+});
+
 //Статические страницы
 Route::get('/news', function () {
     return view('news');

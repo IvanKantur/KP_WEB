@@ -29,7 +29,21 @@ Route::get('/catalog', function () {
 Route::get('/catalog/{slug}', [CatalogController::class, 'category'])->name('category');
 Route::get('/catalog/{categorySlug}/{productSlug}', [CatalogController::class, 'product'])->name('product');
 
+//Тестовые маршруты
 Route::get('/test-controller', [App\Http\Controllers\CatalogController::class, 'index']);
+Route::get('/debug-controller', function () {
+    $categories = App\Models\Category::all();
+    $output = 'Метод all(): ' . $categories->count() . '<br>';
+    
+    $categories2 = App\Models\Category::orderBy('sort_order')->get();
+    $output .= 'Метод orderBy(): ' . $categories2->count() . '<br>';
+    
+    foreach ($categories2 as $c) {
+        $output .= $c->id . ' - ' . $c->name . '<br>';
+    }
+    
+    return $output;
+});
 
 //Статические страницы
 Route::get('/news', function () {

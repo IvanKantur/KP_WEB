@@ -19,6 +19,10 @@ Route::get('/', function () {
 Route::get('/home', function () {
     return redirect('/');
 });
+Route::get('/storage-link', function () {
+    Artisan::call('storage:link');
+    return 'Storage linked!';
+});
 
 //Маршруты каталога
 // Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');

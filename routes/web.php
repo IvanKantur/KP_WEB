@@ -44,6 +44,13 @@ Route::get('/debug-controller', function () {
     
     return $output;
 });
+Route::get('/debug-db', function () {
+    $path = database_path('database.sqlite');
+    $exists = file_exists($path);
+    $size = $exists ? filesize($path) : 0;
+    
+    return "DB path: $path<br>Exists: " . ($exists ? 'yes' : 'no') . "<br>Size: $size bytes";
+});
 
 //Статические страницы
 Route::get('/news', function () {

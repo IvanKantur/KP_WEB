@@ -156,6 +156,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::post('/news/{id}/restore', [NewsController::class, 'restore'])->name('news.restore');
     Route::delete('/news/{id}', [NewsController::class, 'destroy'])->name('news.destroy');
     Route::delete('/news/image/{id}', [NewsController::class, 'deleteImage'])->name('news.image.delete');
+    Route::post('/news/image/sort', [NewsController::class, 'sortImages'])->name('news.image.sort');
 });
 
 //Публичные маршруты заказов

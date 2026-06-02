@@ -20,6 +20,7 @@
     <thead>
         <tr>
             <th>ID</th>
+            <th>Фото</th>
             <th>Заголовок</th>
             <th>Slug</th>
             <th>Дата</th>
@@ -31,6 +32,13 @@
         @forelse($news as $item)
         <tr class="{{ $item->trashed() ? 'archived-row' : '' }}">
             <td>{{ $item->id }}</td>
+            <td>
+                @if($item->firstImage)
+                    <img src="{{ asset('storage/' . $item->firstImage->image) }}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                @else
+                    <span style="color: #ccc;">📷</span>
+                @endif
+            </td>
             <td>{{ $item->title }}</td>
             <td>{{ $item->slug }}</td>
             <td>{{ $item->published_at ? $item->published_at->format('d.m.Y') : '-' }}</td>
@@ -66,7 +74,7 @@
         </tr>
         @empty
         <tr>
-            <td colspan="6" style="text-align: center;">Новостей не найдено</td>
+            <td colspan="7" style="text-align: center;">Новостей не найдено</td>
         </tr>
         @endforelse
     </tbody>

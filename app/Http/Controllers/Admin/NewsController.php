@@ -47,7 +47,7 @@ class NewsController extends Controller
             'announce' => 'nullable|string',
             'content' => 'nullable|string',
             'published_at' => 'nullable|date',
-            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:5120'
+            'images.*' => 'image|mimes:jpeg,png,jpg,gif,webp|max:10240'
         ]);
 
         $data = $request->all();
@@ -125,6 +125,18 @@ class NewsController extends Controller
         Storage::disk('public')->delete($image->image);
         $image->delete();
 
+        return response()->json(['success' => true]);
+    }
+
+    // Сортировка изображений
+    public function sortImages(Request $request)
+    {
+        $items = $request->input('items', []);
+        
+        foreach ($items as $item) {
+            NewsImage::where('id', $item['id'])->update(['sort_order' => $item['order']]);
+        }
+        
         return response()->json(['success' => true]);
     }
 

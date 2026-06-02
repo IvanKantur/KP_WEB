@@ -5,7 +5,7 @@
 @section('content')
 <h2>Добавление новости</h2>
 
-<form method="POST" action="{{ route('admin.news.store') }}">
+<form method="POST" action="{{ route('admin.news.store') }}" enctype="multipart/form-data">
     @csrf
     <div class="form-group">
         <label>Заголовок:</label>

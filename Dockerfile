@@ -1,4 +1,4 @@
-FROM php:8.3-apache
+FROM php:8.5-apache
 
 RUN apt-get update && apt-get install -y \
     libsqlite3-dev \
@@ -15,8 +15,8 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Устанавливаем зависимости PHP
-RUN composer install --optimize-autoloader --no-dev
+# Обновляем composer.lock для совместимости с PHP 8.5
+RUN composer update --optimize-autoloader --no-dev
 
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 RUN chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache

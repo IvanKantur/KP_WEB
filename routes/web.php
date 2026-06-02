@@ -65,6 +65,16 @@ Route::get('/debug-sql', function () {
     return $output;
 });
 
+Route::get('/run-migrate', function () {
+    try {
+        Artisan::call('migrate:fresh', ['--force' => true]);
+        Artisan::call('db:seed', ['--force' => true]);
+        return 'Migrations and seeds completed successfully';
+    } catch (\Exception $e) {
+        return 'Error: ' . $e->getMessage();
+    }
+});
+
 //Статические страницы
 Route::get('/news', function () {
     return view('news');

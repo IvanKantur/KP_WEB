@@ -46,6 +46,15 @@ Route::get('/contacts', function () {
     return view('contacts');
 })->name('contacts');
 
+Route::get('/debug-categories', function () {
+    $categories = App\Models\Category::all();
+    $output = '<h1>Categories:</h1>';
+    foreach ($categories as $cat) {
+        $output .= $cat->id . ' - ' . $cat->name . '<br>';
+    }
+    return $output;
+});
+
 //Новости
 Route::get('/news/{slug}', function ($slug) {
     $news = App\Models\News::where('slug', $slug)->where('is_active', true)->firstOrFail();

@@ -22,21 +22,20 @@
     </div>
     <div class="form-group">
         <label>Полный текст:</label>
-        <textarea name="content" rows="10"></textarea>
+        <textarea name="content" class="editor" rows="10"></textarea>
     </div>
     <div class="form-group">
         <label>Дата публикации:</label>
         <input type="date" name="published_at">
     </div>
     <div class="form-group">
+        <label>Фото (максимум 2 шт.):</label>
+        <input type="file" name="images[]" multiple accept="image/*">
+    </div>
+    <div class="form-group">
         <label>
             <input type="checkbox" name="is_active" value="1" checked> Опубликовать
         </label>
-    </div>
-    <div class="form-group">
-        <label>Фото (максимум 2 шт.):</label>
-        <input type="file" name="images[]" multiple accept="image/*">
-        <small>Можно выбрать до 2 файлов</small>
     </div>
     <button type="submit" class="btn">Сохранить</button>
 </form>

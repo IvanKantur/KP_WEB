@@ -9,7 +9,7 @@
         <div class="product-card">
             <div class="product-image">
                 @if($product->thumb)
-                    <img src="{{ asset('storage/' . $product->thumb) }}" alt="{{ $product->name }}" style="width: 100%; height: 100%; object-fit: cover;">
+                    <img src="{{ asset('storage/' . $product->thumb) }}" alt="{{ $product->name }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px;">
                 @else
                     <span>📷 Нет фото</span>
                 @endif

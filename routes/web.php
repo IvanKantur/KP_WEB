@@ -102,6 +102,11 @@ Route::get('/cart/count', [CartController::class, 'getCount'])->name('cart.count
 Route::post('/contacts', [ContactController::class, 'send'])->name('contacts.send');
 
 
+Route::get('/storage-link', function () {
+    \Artisan::call('storage:link');
+    return 'Storage linked!';
+});
+
 //Админские маршруты
 Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () {
     

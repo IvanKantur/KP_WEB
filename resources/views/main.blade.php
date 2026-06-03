@@ -902,7 +902,7 @@ small {
                            onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
                             Выход
                         </a>
-                        <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                        <form id="logout-form" action="{{ url('/logout') }}" method="POST" style="display: none;">
                             @csrf
                         </form>
                     @endguest

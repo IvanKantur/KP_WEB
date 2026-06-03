@@ -879,6 +879,29 @@ small {
         justify-content: center;
         margin-top: 10px;
     }
+
+/* Уменьшаем фото в каталоге */
+.product-image {
+    width: 100%;
+    height: 160px;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.product-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.product-image span {
+    font-size: 32px;
+    color: #ccc;
+}
 }
 </style>
 <body>

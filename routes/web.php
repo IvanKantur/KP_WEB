@@ -12,7 +12,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ContactController;
 
 if (app()->environment('production')) {
-    URL::forceScheme('https');
+    \URL::forceScheme('https');
 }
 
 //Главная страница

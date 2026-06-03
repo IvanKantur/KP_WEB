@@ -9,9 +9,9 @@
         <div class="product-card">
             <div class="product-image">
                 @if($product->thumb)
-                    <img src="{{ asset('storage/' . $product->thumb) }}" alt="{{ $product->name }}" style="width: 100%; height: 180px; object-fit: cover; border-radius: 8px;">
+                    <img src="{{ asset('storage/' . $product->thumb) }}" alt="{{ $product->name }}" class="product-thumb">
                 @else
-                    <span>📷 Нет фото</span>
+                    <span class="no-image">📷</span>
                 @endif
             </div>
             <div class="product-title">{{ $product->name }}</div>
@@ -40,6 +40,31 @@
 .product-card {
     transition: all 0.3s ease;
     height: 100%;
+}
+
+/* Миниатюры товаров в каталоге */
+.product-thumb {
+    width: 100%;
+    height: 160px;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: transform 0.3s ease;
+}
+
+.product-card:hover .product-thumb {
+    transform: scale(1.05);
+}
+
+.no-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 160px;
+    background: #f5f5f5;
+    color: #ccc;
+    font-size: 32px;
+    border-radius: 8px;
 }
 </style>
 @endsection

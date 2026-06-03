@@ -11,6 +11,10 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ContactController;
 
+if (app()->environment('production')) {
+    URL::forceScheme('https');
+}
+
 //Главная страница
 Route::get('/', function () {
     return view('home');

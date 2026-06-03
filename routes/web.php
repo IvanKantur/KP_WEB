@@ -11,9 +11,9 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ContactController;
 
-if (app()->environment('production')) {
-    \URL::forceScheme('https');
-}
+// if (app()->environment('production')) {
+//     \URL::forceScheme('https');
+// }
 
 Route::get('/fix-images', function () {
     $products = App\Models\Product::with('images')->get();

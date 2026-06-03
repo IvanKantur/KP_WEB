@@ -15,6 +15,17 @@ if (app()->environment('production')) {
     \URL::forceScheme('https');
 }
 
+Route::get('/fix-images', function () {
+    $products = App\Models\Product::with('images')->get();
+    foreach ($products as $product) {
+        foreach ($product->images as $image) {
+            $image->image = str_replace('http://kp-web-uw28.onrender.com/storage/', '', $image->image);
+            $image->save();
+        }
+    }
+    return 'Images paths fixed!';
+});
+
 //Главная страница
 Route::get('/', function () {
     return view('home');

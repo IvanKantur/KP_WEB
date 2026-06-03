@@ -20,4 +20,22 @@
     </div>
     @endforeach
 </div>
+<style>
+.category-image {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 12px;
+}
+.category-image-placeholder {
+    width: 100%;
+    height: 180px;
+    background: #f5f5f5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 48px;
+    border-radius: 12px;
+}
+</style>
 @endsection

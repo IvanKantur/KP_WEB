@@ -101,6 +101,18 @@ Route::get('/cart/count', [CartController::class, 'getCount'])->name('cart.count
 //Форма обратной связи
 Route::post('/contacts', [ContactController::class, 'send'])->name('contacts.send');
 
+Route::get('/check-storage', function () {
+    $path = storage_path('app/public');
+    $exists = file_exists($path);
+    $files = scandir($path);
+    return response()->json([
+        'path' => $path,
+        'exists' => $exists,
+        'files' => array_slice($files, 2),
+        'public_path' => public_path('storage'),
+        'is_link' => is_link(public_path('storage'))
+    ]);
+});
 
 Route::get('/storage-link', function () {
     \Artisan::call('storage:link');

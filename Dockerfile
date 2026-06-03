@@ -14,35 +14,31 @@ WORKDIR /var/www/html
 
 COPY . .
 
-# Игнорируем требования к версии PHP
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-req=php
 
-# Создаем папки для фото
 RUN mkdir -p storage/app/public/products storage/app/public/categories storage/app/public/news
 
-# Копируем фото из репозитория
 COPY storage/app/public/products /var/www/html/storage/app/public/products
 COPY storage/app/public/categories /var/www/html/storage/app/public/categories
 COPY storage/app/public/news /var/www/html/storage/app/public/news
 
-# Копируем существующую БД из репозитория
 COPY database/database.sqlite /var/www/html/database/database.sqlite
 
-# Настраиваем права
-RUN chown -R www-data:www-data storage bootstrap/cache database
+# Правильные права доступа
+RUN chown -R www-data:www-data storage bootstrap/cache database public
 RUN chmod -R 775 storage bootstrap/cache
-RUN chmod -R 777 database
-RUN chmod -R 777 storage/app/public
+RUN chmod -R 775 database
+RUN chmod -R 775 storage/app/public
+RUN chmod -R 775 public
 
-# Выполняем миграции только если нет таблиц
 RUN php artisan migrate --force || true
+RUN php artisan storage:link
 
-EXPOSE 10000
-
-# Очищаем кэш при старте
 RUN php artisan config:clear && \
     php artisan cache:clear && \
     php artisan view:clear && \
     php artisan route:clear
+
+EXPOSE 10000
 
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=10000"]

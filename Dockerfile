@@ -17,13 +17,22 @@ COPY . .
 # Игнорируем требования к версии PHP
 RUN composer install --optimize-autoloader --no-dev --ignore-platform-req=php
 
-# Копируем существующую БД из репозитория (если есть)
+# Создаем папки для фото
+RUN mkdir -p storage/app/public/products storage/app/public/categories storage/app/public/news
+
+# Копируем фото из репозитория
+COPY storage/app/public/products /var/www/html/storage/app/public/products
+COPY storage/app/public/categories /var/www/html/storage/app/public/categories
+COPY storage/app/public/news /var/www/html/storage/app/public/news
+
+# Копируем существующую БД из репозитория
 COPY database/database.sqlite /var/www/html/database/database.sqlite
 
 # Настраиваем права
 RUN chown -R www-data:www-data storage bootstrap/cache database
 RUN chmod -R 775 storage bootstrap/cache
 RUN chmod -R 777 database
+RUN chmod -R 777 storage/app/public
 
 # Выполняем миграции только если нет таблиц
 RUN php artisan migrate --force || true
